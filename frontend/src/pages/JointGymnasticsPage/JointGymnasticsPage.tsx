@@ -13,25 +13,21 @@ export default function JointGymnasticsPage() {
   const [standingOnly, setStandingOnly] = useState<boolean>(false);
   const [currentVideo, setCurrentVideo] = useState<JointGymVideo | null>(null);
   const [isFromArchiveRepeat, setIsFromArchiveRepeat] = useState<boolean>(false);
-  const [lastViewedDaysAgo, setLastViewedDaysAgo] = useState<number | undefined>();
-  const [unwatchedCount, setUnwatchedCount] = useState<number>(0);
-  const [totalMatchingCount, setTotalMatchingCount] = useState<number>(0);
 
   // Состояние воспроизведения видео
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [isMuted, setIsMuted] = useState<boolean>(false);
   const [currentTime, setCurrentTime] = useState<number>(0);
-  const [duration, setDuration] = useState<number>(900); // 15 минут = 900 сек по умолчанию
+  const [duration, setDuration] = useState<number>(900); // 15 минут = 900 сек
   const [isCompleted, setIsCompleted] = useState<boolean>(false);
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
 
-  // Модалка истории и гайд
+  // Модалка истории за 30 дней
   const [showHistoryModal, setShowHistoryModal] = useState<boolean>(false);
-  const [showStorageGuide, setShowStorageGuide] = useState<boolean>(false);
 
   const videoRef = useRef<HTMLVideoElement | null>(null);
 
-  // Инициализация случайного видео при монтировании
+  // Подбор видео
   const pickVideo = useCallback(
     (standing: boolean, excludeId?: string) => {
       const result = selectNextVideo({
@@ -42,14 +38,11 @@ export default function JointGymnasticsPage() {
       if (result) {
         setCurrentVideo(result.video);
         setIsFromArchiveRepeat(result.isFromArchiveRepeat);
-        setLastViewedDaysAgo(result.lastViewedDaysAgo);
-        setUnwatchedCount(result.unwatchedCount);
-        setTotalMatchingCount(result.totalMatchingCount);
 
-        // Фиксируем факт показа видео в истории
+        // Фиксируем факт показа видео
         recordVideoView(result.video.id, false);
 
-        // Сбрасываем плеер
+        // Сброс плеера
         setIsPlaying(false);
         setCurrentTime(0);
         if (videoRef.current) {
@@ -64,7 +57,7 @@ export default function JointGymnasticsPage() {
   useEffect(() => {
     pickVideo(false);
 
-    // Проверяем, выполнена ли уже гимнастика на сегодня
+    // Проверяем статус выполнения на сегодня
     const today = new Date().toISOString().split('T')[0];
     try {
       const cached = localStorage.getItem(`ofp_progress_${today}`);
@@ -77,28 +70,18 @@ export default function JointGymnasticsPage() {
     } catch {}
   }, [pickVideo]);
 
-  // Обработка переключения фильтра «Стоя»
+  // Переключение режима «Стоя»
   const handleToggleStanding = () => {
     const nextStanding = !standingOnly;
     setStandingOnly(nextStanding);
 
-    // Если включили «Стоя», а текущее видео требует коврик — сразу подбираем подходящее стоячее
+    // Если включили «Стоя», а текущее видео требует коврик — сразу подбираем стоячее
     if (nextStanding && currentVideo && !currentVideo.is_standing) {
       pickVideo(true, currentVideo.id);
-    } else {
-      // Иначе пересчитываем счётчики пула
-      const result = selectNextVideo({
-        standingOnly: nextStanding,
-        currentVideoId: currentVideo?.id,
-      });
-      if (result) {
-        setUnwatchedCount(result.unwatchedCount);
-        setTotalMatchingCount(result.totalMatchingCount);
-      }
     }
   };
 
-  // Кнопка «Рефреш / Другая зарядка»
+  // Кнопка «Другая зарядка»
   const handleRefresh = () => {
     setIsRefreshing(true);
     setTimeout(() => setIsRefreshing(false), 500);
@@ -108,7 +91,7 @@ export default function JointGymnasticsPage() {
     }
   };
 
-  // Выбор конкретного видео из истории
+  // Выбор видео из истории
   const handleSelectFromHistory = (video: JointGymVideo) => {
     setCurrentVideo(video);
     setIsFromArchiveRepeat(true);
@@ -134,14 +117,14 @@ export default function JointGymnasticsPage() {
     // Сохраняем прогресс для главной страницы и бэкенда
     await markTodayJointGymCompleted();
 
-    // Проигрываем победный звук
+    // Победный звук
     try {
       const victoryAudio = new Audio('/sounds/z_uki-pobeda.mp3');
       victoryAudio.play().catch(() => {});
     } catch {}
   };
 
-  // Управление видео
+  // Управление плеером
   const togglePlay = () => {
     if (!videoRef.current) return;
     if (videoRef.current.paused) {
@@ -185,107 +168,16 @@ export default function JointGymnasticsPage() {
     return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
   };
 
-  const handleCloseTab = () => {
-    window.close();
-  };
-
   const progressPercent = duration > 0 ? (currentTime / duration) * 100 : 0;
   const historyEntries = getVideoHistory();
 
   return (
     <div className="joint-gym-page fade-in">
-      {/* Шапка страницы */}
+      {/* Лаконичная шапка страницы */}
       <header className="joint-gym-header">
-        <div className="header-left">
-          <button
-            type="button"
-            className="close-window-btn"
-            onClick={handleCloseTab}
-            title="Закрыть вкладку"
-          >
-            ✕ Закрыть вкладку
-          </button>
-          <div className="header-title-wrap">
-            <h1>Суставная гимнастика</h1>
-            <p>15 минут · Ежедневная мобилизация</p>
-          </div>
-        </div>
+        <h1 className="joint-gym-title">Суставная гимнастика</h1>
+        <p className="joint-gym-subtitle">15 минут · Ежедневная мобилизация</p>
       </header>
-
-      {/* Панель фильтра «Стоя» и рефреша */}
-      <section className="joint-controls-bar">
-        <label className="standing-toggle-label" onClick={handleToggleStanding}>
-          <div className={`toggle-switch ${standingOnly ? 'active' : ''}`}>
-            <div className="toggle-knob" />
-          </div>
-          <div className="standing-label-text">
-            <span className="standing-title">Зарядка стоя</span>
-            <span className="standing-hint">
-              {standingOnly ? 'Коврик не требуется' : 'Включая комплексы на коврике'}
-            </span>
-          </div>
-        </label>
-
-        <div className="controls-actions">
-          <button
-            type="button"
-            className="refresh-video-btn"
-            onClick={handleRefresh}
-            title="Выбрать другую зарядку"
-          >
-            <span className={`refresh-icon ${isRefreshing ? 'rotating' : ''}`}>↻</span>
-            Другая зарядка
-          </button>
-
-          <button
-            type="button"
-            className="history-toggle-btn"
-            onClick={() => setShowHistoryModal(true)}
-            title="История показов за 30 дней"
-          >
-            История ({historyEntries.length})
-          </button>
-        </div>
-      </section>
-
-      {/* Информационный бейдж ротации 30 дней */}
-      {currentVideo && (
-        <div
-          className={`rotation-status-badge ${
-            isFromArchiveRepeat ? 'archive-repeat' : ''
-          }`}
-        >
-          {isFromArchiveRepeat ? (
-            <span>
-              ℹ️ Все подходящие видео уже показаны за 30 дней. Показываем повтор из
-              архива (просмотрено {lastViewedDaysAgo} дн. назад).
-            </span>
-          ) : (
-            <span>
-              ✨ Свежая зарядка: не показывалась в последние 30 дней (доступно:{' '}
-              {unwatchedCount} из {totalMatchingCount}).
-            </span>
-          )}
-        </div>
-      )}
-
-      {/* Баннер успешного выполнения */}
-      {isCompleted && (
-        <div className="completion-banner">
-          <h3>🎉 Суставная гимнастика выполнена!</h3>
-          <p>
-            Отметка автоматически проставлена на сегодня в вашем дневнике «Сегодня».
-            Вы можете закрыть эту вкладку и продолжать день.
-          </p>
-          <button
-            type="button"
-            className="close-window-btn banner-close-action"
-            onClick={handleCloseTab}
-          >
-            Закрыть эту вкладку
-          </button>
-        </div>
-      )}
 
       {/* Вертикальный видеоплеер (9:16) */}
       {currentVideo && (
@@ -319,7 +211,7 @@ export default function JointGymnasticsPage() {
             </span>
           </div>
 
-          {/* Центральная кнопка Play, когда на паузе */}
+          {/* Кнопка Play по центру, когда на паузе */}
           {!isPlaying && (
             <div className="player-center-action">
               <button
@@ -379,86 +271,64 @@ export default function JointGymnasticsPage() {
         </div>
       )}
 
-      {/* Описание текущего видео и ручная кнопка отметки */}
-      {currentVideo && (
-        <section className="video-info-card">
-          <h2 className="video-info-title">{currentVideo.title}</h2>
-          <p className="video-instructor-line">
-            Инструктор: <strong>{currentVideo.instructor}</strong> · 15 минут
-          </p>
-
-          <div className="focus-tags-list">
-            {currentVideo.focus_areas.map((tag) => (
-              <span key={tag} className="focus-tag-chip">
-                {tag}
+      {/* Блок под видео: управление выбором + кнопка «Выполнено» */}
+      <div className="video-controls-card">
+        <div className="video-options-row">
+          <label className="standing-toggle-label" onClick={handleToggleStanding}>
+            <div className={`toggle-switch ${standingOnly ? 'active' : ''}`}>
+              <div className="toggle-knob" />
+            </div>
+            <div className="standing-label-text">
+              <span className="standing-title">Зарядка стоя</span>
+              <span className="standing-hint">
+                {standingOnly ? 'Без коврика' : 'С ковриком'}
               </span>
-            ))}
-          </div>
+            </div>
+          </label>
 
-          <p className="video-desc-text">{currentVideo.description}</p>
-
-          <div className="manual-complete-bar">
-            <span className="standing-hint">
-              {isCompleted
-                ? 'Отметка зафиксирована'
-                : 'Отметка проставится автоматически по завершении видео'}
-            </span>
+          <div className="video-action-btns">
+            <button
+              type="button"
+              className="btn-secondary"
+              onClick={handleRefresh}
+              title="Выбрать другую зарядку"
+            >
+              <span className={`refresh-icon ${isRefreshing ? 'rotating' : ''}`}>↻</span>
+              Другая зарядка
+            </button>
 
             <button
               type="button"
-              className={`mark-done-btn ${isCompleted ? 'already-done' : ''}`}
-              onClick={handleComplete}
-              disabled={isCompleted}
+              className="btn-secondary"
+              onClick={() => setShowHistoryModal(true)}
+              title="История показов за 30 дней"
             >
-              {isCompleted ? '✓ Выполнено на сегодня' : 'Отметить выполненным'}
+              История ({historyEntries.length})
             </button>
           </div>
-        </section>
-      )}
-
-      {/* Рекомендации по сетевому хранению 50+ видео */}
-      <section className="storage-guide-card">
-        <div
-          className="storage-guide-summary"
-          onClick={() => setShowStorageGuide(!showStorageGuide)}
-        >
-          <span>💡 Архитектура: где лучше хранить 50+ вертикальных видео в сети?</span>
-          <span>{showStorageGuide ? '▲ скрыть' : '▼ подробнее'}</span>
         </div>
 
-        {showStorageGuide && (
-          <div className="storage-guide-content">
-            <div className="storage-option-row">
-              <span className="storage-option-name">1. Cloudflare Stream (Рекомендуемый выбор)</span>
-              <p>
-                Автоматический адаптивный битрейт (HLS/DASH) для смартфонов, CDN по всему миру,
-                $5/мес за 1000 минут видео ($1 за 1000 минут стриминга). Встроенный плеер и защита от скачивания.
-              </p>
-            </div>
-
-            <div className="storage-option-row">
-              <span className="storage-option-name">2. Bunny Stream (Бюджетная альтернатива)</span>
-              <p>
-                $0.005 за ГБ хранения и $0.01 за ГБ трафика. Отличное быстродействие, встроенный плеер и перекодирование вертикального 9:16 видео.
-              </p>
-            </div>
-
-            <div className="storage-option-row">
-              <span className="storage-option-name">3. Cloudflare R2 / S3 + CDN</span>
-              <p>
-                Хранилище с нулевой стоимостью исходящего трафика (Egress-free). Подходит для прямой раздачи оптимизированных .mp4 / .webm файлов.
-              </p>
-            </div>
-
-            <div className="storage-option-row">
-              <span className="storage-option-name">4. YouTube Shorts / Unlisted (Бесплатный вариант)</span>
-              <p>
-                Загрузка с доступом по ссылке. Бесплатно и надежно, но в плеере отображается брендинг YouTube.
-              </p>
-            </div>
-          </div>
+        {isFromArchiveRepeat && (
+          <p className="archive-repeat-hint">
+            Показано повторно из архива: все видео этой категории уже просмотрены за 30 дней.
+          </p>
         )}
-      </section>
+
+        <button
+          type="button"
+          className={`btn-complete ${isCompleted ? 'completed' : ''}`}
+          onClick={handleComplete}
+          disabled={isCompleted}
+        >
+          {isCompleted ? '✓ Выполнено' : 'Выполнено'}
+        </button>
+
+        {isCompleted && (
+          <p className="completed-toast-note">
+            Отметка проставлена на главной странице «Сегодня»
+          </p>
+        )}
+      </div>
 
       {/* Модальное окно истории за 30 дней */}
       {showHistoryModal && (
@@ -474,8 +344,9 @@ export default function JointGymnasticsPage() {
               <h2>Показанные видео (за 30 дней)</h2>
               <button
                 type="button"
-                className="close-window-btn"
+                className="close-modal-icon-btn"
                 onClick={() => setShowHistoryModal(false)}
+                aria-label="Закрыть"
               >
                 ✕
               </button>
@@ -484,7 +355,7 @@ export default function JointGymnasticsPage() {
             <div className="history-list-scroll">
               {historyEntries.length === 0 ? (
                 <p className="text-secondary" style={{ padding: '12px 0' }}>
-                  История просмотров пока пуста.
+                  История показов пока пуста.
                 </p>
               ) : (
                 historyEntries.map((entry: VideoHistoryEntry, idx: number) => {

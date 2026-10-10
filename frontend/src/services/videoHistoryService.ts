@@ -137,7 +137,10 @@ export function selectNextVideo(options: {
 }
 
 /**
- * Автоматическая отметка выполнения суставной гимнастики на сегодня
+ * Автоматическая отметка выполнения суставной гимнастики на сегодня:
+ * 1. Отправляет POST-запрос на бэкенд по адресу /api/ofp/progress
+ * 2. Добавляет идентификатор 'joint-gym-permanent' в completedIds
+ * 3. Сохраняет в localStorage и синхронизирует вкладку «Сегодня» в реальном времени
  */
 export async function markTodayJointGymCompleted(): Promise<void> {
   const today = new Date().toISOString().split('T')[0];
@@ -148,44 +151,43 @@ export async function markTodayJointGymCompleted(): Promise<void> {
     const raw = localStorage.getItem(storageKey);
     const current = raw ? JSON.parse(raw) : { completedIds: [], variant: 35, stepsDone: false };
     
-    const completedIds = Array.isArray(current.completedIds) ? current.completedIds : [];
+    const completedIds = Array.isArray(current.completedIds) ? [...current.completedIds] : [];
     if (!completedIds.includes(TARGET_ID)) {
       completedIds.push(TARGET_ID);
     }
 
-    const updated = {
-      ...current,
-      completedIds,
+    const payload = {
       date: today,
+      completedIds,
+      variant: current.variant ?? 35,
+      stepsDone: current.stepsDone ?? false,
     };
 
-    localStorage.setItem(storageKey, JSON.stringify(updated));
+    // Сохраняем в localStorage
+    localStorage.setItem(storageKey, JSON.stringify(payload));
 
-    // Уведомляем другие вкладки через storage event и BroadcastChannel
+    // Синхронизируем открытые соседние вкладки через BroadcastChannel
     try {
-      window.dispatchEvent(
-        new StorageEvent('storage', {
-          key: storageKey,
-          newValue: JSON.stringify(updated),
-        })
-      );
-      window.dispatchEvent(new CustomEvent('small_steps_joint_gym_completed', { detail: updated }));
+      if (typeof BroadcastChannel !== 'undefined') {
+        const channel = new BroadcastChannel('ofp_progress_channel');
+        channel.postMessage({ type: 'PROGRESS_UPDATED', date: today, payload });
+        channel.close();
+      }
+      window.dispatchEvent(new CustomEvent('small_steps_joint_gym_completed', { detail: payload }));
     } catch {}
 
-    // Отправляем в фоновом режиме на бэкенд
-    fetch('/api/ofp/progress', {
+    // Отправляем запрос на бэкенд в API progress
+    const response = await fetch('/api/ofp/progress', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        date: today,
-        completedIds,
-        variant: current.variant ?? 35,
-        stepsDone: current.stepsDone ?? false,
-      }),
-    }).catch(() => {
-      // Игнорируем сетевые сбои
+      body: JSON.stringify(payload),
     });
+
+    if (response.ok) {
+      const serverResult = await response.json();
+      console.log('Прогресс успешно сохранён на бэкенде:', serverResult);
+    }
   } catch (err) {
-    console.warn('Ошибка при сохранении статуса выполнения гимнастики:', err);
+    console.warn('Ошибка при сохранении прогресса суставной гимнастики:', err);
   }
 }

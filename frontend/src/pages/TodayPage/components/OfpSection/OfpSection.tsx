@@ -92,11 +92,32 @@ export default function OfpSection() {
     loadProgress();
 
     // Слушатели синхронизации, когда пользователь завершает гимнастику в соседней вкладке
+    let channel: BroadcastChannel | null = null;
+    if (typeof BroadcastChannel !== 'undefined') {
+      channel = new BroadcastChannel('ofp_progress_channel');
+      channel.onmessage = (event) => {
+        if (event.data?.type === 'PROGRESS_UPDATED') {
+          refreshLocalProgress();
+        }
+      };
+    }
+
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible') {
+        refreshLocalProgress();
+      }
+    };
+
     window.addEventListener('storage', refreshLocalProgress);
+    window.addEventListener('focus', refreshLocalProgress);
+    document.addEventListener('visibilitychange', handleVisibility);
     window.addEventListener('small_steps_joint_gym_completed', refreshLocalProgress);
 
     return () => {
+      if (channel) channel.close();
       window.removeEventListener('storage', refreshLocalProgress);
+      window.removeEventListener('focus', refreshLocalProgress);
+      document.removeEventListener('visibilitychange', handleVisibility);
       window.removeEventListener('small_steps_joint_gym_completed', refreshLocalProgress);
     };
   }, [today]);
