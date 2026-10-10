@@ -1,0 +1,23 @@
+.today-header {
+  margin-bottom: var(--spacing-lg);
+}
+
+.brand {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-xs);
+}
+
+.slogan {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  margin-bottom: var(--spacing-md);
+}
+
+.date-display {
+  font-size: var(--text-3xl);
+  color: var(--color-text-primary);
+}

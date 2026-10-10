@@ -1,0 +1,20 @@
+CREATE TABLE IF NOT EXISTS day_plans (
+  id                       UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  week_plan_id             UUID NOT NULL REFERENCES week_plans(id) ON DELETE CASCADE,
+  day_of_week              VARCHAR(16) NOT NULL,
+  date                     DATE NOT NULL,
+  main_workout_type        VARCHAR(64),
+  main_workout_goal        TEXT,
+  main_workout_duration_min INT,
+  main_workout_status      VARCHAR(16) DEFAULT 'planned' CHECK (main_workout_status IN ('planned','in-progress','completed','skipped','modified')),
+  ofp_version              VARCHAR(4) DEFAULT '35' CHECK (ofp_version IN ('35','50','70')),
+  ofp_joint_video_id       UUID REFERENCES videos(id) ON DELETE SET NULL,
+  ofp_variable_block       VARCHAR(64),
+  ofp_additional_blocks    TEXT[] DEFAULT '{}',
+  steps_norm_done          BOOLEAN DEFAULT false,
+  recovery_score           INT CHECK (recovery_score BETWEEN 0 AND 100),
+  notes                    TEXT,
+  created_at               TIMESTAMPTZ DEFAULT now(),
+  updated_at               TIMESTAMPTZ DEFAULT now(),
+  UNIQUE(week_plan_id, date)
+);

@@ -1,0 +1,43 @@
+.main-workout {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-sm);
+}
+
+.workout-type {
+  font-size: var(--text-xl);
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.workout-goal {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+}
+
+.recovery-status {
+  font-size: var(--text-sm);
+  color: var(--color-accent-primary);
+  margin-bottom: var(--spacing-sm);
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-sm) var(--spacing-lg);
+  background: var(--color-accent-primary);
+  color: white;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  text-decoration: none;
+  transition: background 0.2s;
+  margin-top: var(--spacing-sm);
+  align-self: flex-start;
+}
+
+.btn-primary:hover {
+  background: var(--color-accent-primary-dark);
+}

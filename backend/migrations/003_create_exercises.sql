@@ -1,0 +1,22 @@
+CREATE TABLE IF NOT EXISTS exercises (
+  id                UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  title             VARCHAR(256) NOT NULL,
+  short_description TEXT,
+  purpose           TEXT[] DEFAULT '{}',
+  how_to            TEXT[] DEFAULT '{}',
+  image_url         TEXT,
+  topics            TEXT[] DEFAULT '{}',
+  body_parts        TEXT[] DEFAULT '{}',
+  equipment         TEXT[] DEFAULT '{}',
+  qualities         TEXT[] DEFAULT '{}',
+  difficulty        INT DEFAULT 1 CHECK (difficulty BETWEEN 1 AND 5),
+  intensity         INT DEFAULT 1 CHECK (intensity BETWEEN 1 AND 5),
+  impact            INT DEFAULT 0 CHECK (impact BETWEEN 0 AND 3),
+  min_dose          TEXT,
+  normal_dose       TEXT,
+  max_dose          TEXT,
+  contraindications TEXT[] DEFAULT '{}',
+  status            VARCHAR(16) DEFAULT 'draft' CHECK (status IN ('draft','review','confirmed','archived')),
+  created_at        TIMESTAMPTZ DEFAULT now(),
+  updated_at        TIMESTAMPTZ DEFAULT now()
+);

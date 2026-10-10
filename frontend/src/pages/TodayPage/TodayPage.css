@@ -1,0 +1,23 @@
+.today-page {
+  padding-bottom: 80px;
+}
+
+.today-columns {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+}
+
+@media (min-width: 480px) {
+  .today-columns {
+    flex-direction: row;
+  }
+
+  .right-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
+}

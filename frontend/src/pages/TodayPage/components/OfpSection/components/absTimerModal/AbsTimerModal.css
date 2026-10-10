@@ -1,0 +1,80 @@
+.abs-timer-card {
+  max-width: 380px !important;
+  text-align: center;
+}
+
+.abs-timer-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-sm) 0;
+}
+
+.phase-badge {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  padding: 6px var(--spacing-md);
+  border-radius: var(--radius-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.phase-idle { background: #f3f4f6; color: var(--color-text-secondary); }
+.phase-preparation { background: #fef3c7; color: #d97706; animation: pulse 1s infinite; }
+.phase-work { background: #dcfce7; color: #15803d; font-weight: bold; }
+.phase-rest { background: #eff6ff; color: var(--color-accent-primary); }
+.phase-finished { background: #f3e8ff; color: #7e22ce; }
+
+.timer-display {
+  font-size: 72px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-primary);
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  margin: var(--spacing-md) 0;
+}
+
+.timer-ms {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  font-weight: 400;
+  margin-left: 4px;
+}
+
+.timer-controls {
+  width: 100%;
+}
+
+.timer-main-btn {
+  width: 100%;
+  padding: var(--spacing-sm);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  border-radius: var(--radius-sm);
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.timer-start-btn {
+  background: var(--color-accent-primary);
+  color: white;
+}
+
+.timer-start-btn:hover { background: #2563eb; }
+
+.btn-pause {
+  background: #ef4444;
+  color: white;
+}
+
+.btn-pause:hover { background: #dc2626; }
+
+@keyframes pulse {
+  0% { opacity: 0.8; }
+  50% { opacity: 1; }
+  100% { opacity: 0.8; }
+}

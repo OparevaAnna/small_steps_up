@@ -1,0 +1,24 @@
+.coverage-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-md);
+}
+
+.coverage-item {
+  padding: 4px 12px;
+  border-radius: 20px;
+  background: var(--color-accent-snow);
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+}
+
+.coverage-item.done {
+  background: rgba(90, 138, 114, 0.12);
+  color: var(--color-green);
+}
+
+.coverage-item.warning {
+  background: rgba(219, 161, 89, 0.12);
+  color: var(--color-amber);
+}
