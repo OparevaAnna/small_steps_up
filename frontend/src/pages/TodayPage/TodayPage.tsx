@@ -5,7 +5,7 @@ import OfpSection from './components/OfpSection';
 import FocusDay from './components/FocusDay';
 import FocusWeek from './components/FocusWeek';
 import WeekPathSection from './components/WeekPathSection';
-import BottomNav from './components/BottomNav';
+import BottomNav from '../../components/BottomNav';
 
 export default function TodayPage() {
   return (

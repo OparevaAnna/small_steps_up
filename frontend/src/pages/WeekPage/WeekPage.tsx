@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import BottomNav from '../../components/BottomNav';
 import './WeekPage.css';
 
 export default function WeekPage() {
@@ -18,7 +19,7 @@ export default function WeekPage() {
           { day: 'Пятница', workout: 'Лестница', load: 'умеренный', status: 'planned' },
           { day: 'Суббота', workout: 'Велостанок — длительно', load: 'умеренный', status: 'planned' },
           { day: 'Воскресенье', workout: 'Восстановительный день', load: 'rest', status: 'planned' },
-        ].map((item, i) => (
+        ].map((item) => (
           <div key={item.day} className={`day-row card ${item.load === 'rest' ? 'rest-day' : ''}`}>
             <div className="day-info">
               <span className="day-name-day">{item.day}</span>
@@ -30,13 +31,7 @@ export default function WeekPage() {
         ))}
       </div>
 
-      <nav className="bottom-nav">
-        <Link to="/" className="nav-link">Сегодня</Link>
-        <Link to="/week" className="nav-link active">Неделя</Link>
-        <Link to="/ofp" className="nav-link">ОФП</Link>
-        <Link to="/catalog" className="nav-link">Каталог</Link>
-        <Link to="/profile" className="nav-link">Профиль</Link>
-      </nav>
+      <BottomNav />
     </div>
   );
 }

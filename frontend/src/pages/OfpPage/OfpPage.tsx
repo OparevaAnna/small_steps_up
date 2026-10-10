@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import BottomNav from '../../components/BottomNav';
 import './OfpPage.css';
 
 export default function OfpPage() {
@@ -27,13 +28,7 @@ export default function OfpPage() {
         <span className="status-badge planned">запланировано</span>
       </section>
 
-      <nav className="bottom-nav">
-        <Link to="/" className="nav-link">Сегодня</Link>
-        <Link to="/week" className="nav-link">Неделя</Link>
-        <Link to="/ofp" className="nav-link active">ОФП</Link>
-        <Link to="/catalog" className="nav-link">Каталог</Link>
-        <Link to="/profile" className="nav-link">Профиль</Link>
-      </nav>
+      <BottomNav />
     </div>
   );
 }

@@ -23,22 +23,22 @@ export default function AbsTimerModal({ isOpen, zIndex, onClose, onComplete }: A
   const successAudio = useRef<HTMLAudioElement | null>(null);
 
   // Ссылки на макро-таймеры для их безопасного сброса
-  const phaseTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const soundTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const visualIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const phaseTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const soundTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const visualIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // Инициализация и воспроизведение звуков
   const playSound = useCallback((type: 'beep' | 'gong' | 'success') => {
     let audio: HTMLAudioElement | null = null;
     if (type === 'beep') {
-      if (!beepAudio.current) beepAudio.current = new Audio('../../../../sounds/54.mp3');
+      if (!beepAudio.current) beepAudio.current = new Audio('/sounds/54.mp3');
       audio = beepAudio.current;
     } else if (type === 'gong') {
-      if (!gongAudio.current) gongAudio.current = new Audio('../../../../sounds/54.mp3');
+      if (!gongAudio.current) gongAudio.current = new Audio('/sounds/54.mp3');
       audio = gongAudio.current;
     } else if (type === 'success') {
       if (!successAudio.current)
-        successAudio.current = new Audio('../../../../sounds/z_uki-pobeda.mp3');
+        successAudio.current = new Audio('/sounds/z_uki-pobeda.mp3');
       audio = successAudio.current;
     }
     if (audio) {

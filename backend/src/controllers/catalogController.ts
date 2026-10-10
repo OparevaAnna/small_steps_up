@@ -24,7 +24,8 @@ export class CatalogController {
 
   async getById(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const exercise = await catalogService.getById(req.params.id);
+      const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+      const exercise = await catalogService.getById(id);
       res.json(exercise);
     } catch (err) {
       next(err);

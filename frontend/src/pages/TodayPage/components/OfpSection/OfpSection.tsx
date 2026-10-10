@@ -2,26 +2,10 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { createPortal } from 'react-dom';
 import { getMaxZIndex } from '../../../../helpers/getMaxZIndex';
-import ExerciseModal from './components/ExerciseModal/ExerciseModal';
+import ExerciseModal from './components/exerciseModal/ExerciseModal';
 import './OfpSection.css';
 import AbsTimerModal from './components/absTimerModal/AbsTimerModal';
-
-interface BackendExercise {
-  id: string;
-  title: string;
-  short_description: string;
-  is_unilateral: boolean;
-  dose: string;
-  purpose: string[];
-  how_to: string[];
-}
-
-interface WorkoutBlock {
-  id: string;
-  title: string;
-  duration_min: number;
-  exercises: BackendExercise[];
-}
+import { FALLBACK_BLOCKS, BackendExercise, WorkoutBlock } from '../../../../data/fallbackOfp';
 
 type Variant = 35 | 50 | 70;
 
@@ -56,15 +40,20 @@ export default function OfpSection() {
         const workoutRes = await fetch(`/api/ofp/daily-ofp?date=${today}&duration=${variant}`);
         if (workoutRes.ok) {
           const workoutData = await workoutRes.json();
-          setBlocks(workoutData.blocks ?? []);
-          // УДАЛЕНО: setOpenBlockIds([]); — теперь состояние открытых блоков сохраняется!
+          if (workoutData.blocks && workoutData.blocks.length > 0) {
+            setBlocks(workoutData.blocks);
+            return;
+          }
         }
       } catch (err) {
-        console.warn('Не удалось загрузить данные тренировки ОФП:', err);
+        console.warn('API недоступен, используется локальный тренировочный план ОФП:', err);
       } finally {
         setIsContentUpdating(false);
         setIsInitialLoading(false);
       }
+
+      // Фолбэк на подготовленную библиотеку упражнений
+      setBlocks(FALLBACK_BLOCKS[variant] || FALLBACK_BLOCKS[35]);
     }
 
     loadWorkout();
@@ -73,16 +62,28 @@ export default function OfpSection() {
   // 🕵️ ЭФФЕКТ: Первичная загрузка прогресса (выполняется 1 раз при монтировании)
   useEffect(() => {
     async function loadProgress() {
+      // Сначала читаем локальный кэш для моментального отклика
+      try {
+        const cached = localStorage.getItem(`ofp_progress_${today}`);
+        if (cached) {
+          const progressData = JSON.parse(cached);
+          if (progressData.completedIds) setCompletedIds(progressData.completedIds);
+          if (typeof progressData.stepsDone === 'boolean') setStepsDone(progressData.stepsDone);
+          if (progressData.variant) setVariant(progressData.variant as Variant);
+        }
+      } catch {}
+
+      // Затем синхронизируем с бэкендом при наличии соединения
       try {
         const progressRes = await fetch(`/api/ofp/progress?date=${today}`);
         if (progressRes.ok) {
           const progressData = await progressRes.json();
-          setCompletedIds(progressData.completedIds ?? []);
-          setStepsDone(progressData.stepsDone ?? false);
+          if (progressData.completedIds) setCompletedIds(progressData.completedIds);
+          if (typeof progressData.stepsDone === 'boolean') setStepsDone(progressData.stepsDone);
           if (progressData.variant) setVariant(progressData.variant as Variant);
         }
       } catch (err) {
-        console.warn('Не удалось загрузить прогресс ОФП:', err);
+        // Офлайн режим — прогресс сохраняется локально
       }
     }
     loadProgress();
@@ -93,6 +94,15 @@ export default function OfpSection() {
     stepsDone?: boolean;
     variant?: Variant;
   }) => {
+    // Сохраняем в localStorage мгновенно
+    try {
+      const cached = localStorage.getItem(`ofp_progress_${today}`);
+      const existing = cached ? JSON.parse(cached) : {};
+      const updated = { ...existing, ...updates };
+      localStorage.setItem(`ofp_progress_${today}`, JSON.stringify(updated));
+    } catch {}
+
+    // Фоновая попытка отправить на сервер
     try {
       await fetch('/api/ofp/progress', {
         method: 'POST',
@@ -100,7 +110,7 @@ export default function OfpSection() {
         body: JSON.stringify({ date: today, ...updates }),
       });
     } catch {
-      console.warn('Не удалось сохранить прогресс ОФП');
+      // Игнорируем ошибку сети
     }
   };
 

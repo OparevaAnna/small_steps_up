@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import BottomNav from '../../components/BottomNav';
 import './ProfilePage.css';
 
 export default function ProfilePage() {
@@ -19,13 +20,7 @@ export default function ProfilePage() {
         <p className="text-muted">Редактирование профиля появится после подключения API</p>
       </section>
 
-      <nav className="bottom-nav">
-        <Link to="/" className="nav-link">Сегодня</Link>
-        <Link to="/week" className="nav-link">Неделя</Link>
-        <Link to="/ofp" className="nav-link">ОФП</Link>
-        <Link to="/catalog" className="nav-link">Каталог</Link>
-        <Link to="/profile" className="nav-link active">Профиль</Link>
-      </nav>
+      <BottomNav />
     </div>
   );
 }

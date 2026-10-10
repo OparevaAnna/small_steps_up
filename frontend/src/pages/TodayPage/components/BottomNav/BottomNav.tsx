@@ -1,24 +1,24 @@
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import './BottomNav.css';
 
 export default function BottomNav() {
   return (
     <nav className="bottom-nav">
-      <Link to="/" className="nav-link active">
+      <NavLink to="/" end className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
         Сегодня
-      </Link>
-      <Link to="/week" className="nav-link">
+      </NavLink>
+      <NavLink to="/week" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
         Неделя
-      </Link>
-      <Link to="/ofp" className="nav-link">
+      </NavLink>
+      <NavLink to="/ofp" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
         ОФП
-      </Link>
-      <Link to="/catalog" className="nav-link">
+      </NavLink>
+      <NavLink to="/catalog" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
         Каталог
-      </Link>
-      <Link to="/profile" className="nav-link">
+      </NavLink>
+      <NavLink to="/profile" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
         Профиль
-      </Link>
+      </NavLink>
     </nav>
   );
 }
