@@ -59,10 +59,9 @@ export default function OfpSection() {
     loadWorkout();
   }, [today, variant]);
 
-  // 🕵️ ЭФФЕКТ: Первичная загрузка прогресса (выполняется 1 раз при монтировании)
+  // 🕵️ ЭФФЕКТ: Первичная загрузка прогресса и слушатель обновления из соседней вкладки видео
   useEffect(() => {
-    async function loadProgress() {
-      // Сначала читаем локальный кэш для моментального отклика
+    function refreshLocalProgress() {
       try {
         const cached = localStorage.getItem(`ofp_progress_${today}`);
         if (cached) {
@@ -72,7 +71,11 @@ export default function OfpSection() {
           if (progressData.variant) setVariant(progressData.variant as Variant);
         }
       } catch {}
+    }
 
+    refreshLocalProgress();
+
+    async function loadProgress() {
       // Затем синхронизируем с бэкендом при наличии соединения
       try {
         const progressRes = await fetch(`/api/ofp/progress?date=${today}`);
@@ -87,6 +90,15 @@ export default function OfpSection() {
       }
     }
     loadProgress();
+
+    // Слушатели синхронизации, когда пользователь завершает гимнастику в соседней вкладке
+    window.addEventListener('storage', refreshLocalProgress);
+    window.addEventListener('small_steps_joint_gym_completed', refreshLocalProgress);
+
+    return () => {
+      window.removeEventListener('storage', refreshLocalProgress);
+      window.removeEventListener('small_steps_joint_gym_completed', refreshLocalProgress);
+    };
   }, [today]);
 
   const saveProgress = async (updates: {
@@ -199,9 +211,15 @@ export default function OfpSection() {
                 onChange={() => toggleExercise('joint-gym-permanent')}
               />
             </label>
-            <Link to="/ofp/joint-gym" className="exercise-link-route">
+            <Link
+              to="/ofp/joint-gym"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="exercise-link-route"
+              title="Открыть видео зарядки в новой вкладке"
+            >
               <span className="exercise-title">Суставная гимнастика</span>
-              <span className="exercise-dose"> · 15 мин</span>
+              <span className="exercise-dose"> · 15 мин ↗</span>
             </Link>
           </li>
 

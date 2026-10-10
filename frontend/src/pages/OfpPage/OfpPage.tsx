@@ -10,11 +10,19 @@ export default function OfpPage() {
         <h1 className="date-title">ОФП</h1>
       </header>
 
-      <section className="card ofp-module">
-        <h2>Суставная гимнастика</h2>
-        <p className="text-secondary">15 мин</p>
-        <span className="status-badge planned">запланировано</span>
-      </section>
+      <Link
+        to="/ofp/joint-gym"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="card ofp-module ofp-module-link"
+        style={{ display: 'block', textDecoration: 'none' }}
+      >
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <h2>Суставная гимнастика ↗</h2>
+          <span className="status-badge planned">открыть видео</span>
+        </div>
+        <p className="text-secondary">15 мин · Ежедневный комплекс</p>
+      </Link>
 
       <section className="card ofp-module">
         <h2>Пресс</h2>

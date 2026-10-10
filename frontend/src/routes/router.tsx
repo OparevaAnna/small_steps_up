@@ -8,6 +8,7 @@ import ExerciseDetailPage from '../pages/ExerciseDetailPage/ExerciseDetailPage';
 import VideoLibraryPage from '../pages/VideoLibraryPage/VideoLibraryPage';
 import ProfilePage from '../pages/ProfilePage/ProfilePage';
 import ExecutionPage from '../pages/ExecutionPage/ExecutionPage';
+import JointGymnasticsPage from '../pages/JointGymnasticsPage/JointGymnasticsPage';
 import NotFoundPage from '../pages/NotFoundPage/NotFoundPage';
 
 export const router = createBrowserRouter([
@@ -18,6 +19,8 @@ export const router = createBrowserRouter([
       { index: true, element: <TodayPage /> },
       { path: 'week', element: <WeekPage /> },
       { path: 'ofp', element: <OfpPage /> },
+      { path: 'ofp/joint-gym', element: <JointGymnasticsPage /> },
+      { path: 'joint-gym', element: <JointGymnasticsPage /> },
       { path: 'catalog', element: <CatalogPage /> },
       { path: 'catalog/:id', element: <ExerciseDetailPage /> },
       { path: 'videos', element: <VideoLibraryPage /> },

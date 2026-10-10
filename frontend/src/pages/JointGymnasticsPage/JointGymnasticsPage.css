@@ -1,0 +1,622 @@
+/* ============================================
+   Joint Gymnastics Page — Mauta Journal
+   Стиль спокойных заснеженных гор
+   ============================================ */
+
+.joint-gym-page {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: var(--spacing-md) var(--spacing-md) calc(var(--spacing-3xl) + 20px);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  min-height: 100vh;
+}
+
+/* Верхняя шапка страницы */
+.joint-gym-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-sm);
+  padding-bottom: var(--spacing-sm);
+  border-bottom: 1px solid var(--color-accent-snow);
+}
+
+.joint-gym-header .header-left {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.close-window-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-accent-snow);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.close-window-btn:hover {
+  background: var(--color-accent-snow);
+  color: var(--color-text-primary);
+}
+
+.header-title-wrap h1 {
+  font-size: 19px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  line-height: 1.2;
+}
+
+.header-title-wrap p {
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+/* Панель управления и фильтров */
+.joint-controls-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-sm);
+  background: var(--color-bg-card);
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-accent-snow);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.standing-toggle-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.toggle-switch {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  background: var(--color-accent-snow);
+  border-radius: 12px;
+  transition: background 0.2s ease;
+}
+
+.toggle-switch.active {
+  background: var(--color-accent-primary);
+}
+
+.toggle-knob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  background: #ffffff;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.toggle-switch.active .toggle-knob {
+  transform: translateX(20px);
+}
+
+.standing-label-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.standing-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.standing-hint {
+  font-size: 11px;
+  color: var(--color-text-muted);
+}
+
+.controls-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.refresh-video-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-accent-primary);
+  background: rgba(59, 98, 133, 0.08);
+  border: 1px solid rgba(59, 98, 133, 0.2);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.refresh-video-btn:hover {
+  background: rgba(59, 98, 133, 0.16);
+  transform: translateY(-1px);
+}
+
+.refresh-video-btn:active {
+  transform: translateY(0);
+}
+
+.refresh-icon.rotating {
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.history-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 7px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-accent-snow);
+  cursor: pointer;
+}
+
+.history-toggle-btn:hover {
+  background: var(--color-accent-snow);
+}
+
+/* Карточка статуса 30 дней */
+.rotation-status-badge {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  background: rgba(90, 138, 114, 0.08);
+  color: var(--color-green);
+  border: 1px solid rgba(90, 138, 114, 0.2);
+}
+
+.rotation-status-badge.archive-repeat {
+  background: rgba(219, 161, 89, 0.1);
+  color: #9c6c2e;
+  border-color: rgba(219, 161, 89, 0.3);
+}
+
+/* ============================================
+   Вертикальный видеоплеер (9:16 portrait)
+   ============================================ */
+
+.vertical-player-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto;
+  aspect-ratio: 9 / 16;
+  background: #0f1418;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(26, 34, 41, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.vertical-video-element {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Оверлей бейджей поверх видео */
+.player-top-overlay {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  right: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.pill-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  pointer-events: auto;
+}
+
+.pill-badge.standing {
+  background: rgba(59, 98, 133, 0.85);
+  color: #ffffff;
+}
+
+.pill-badge.mat {
+  background: rgba(30, 41, 59, 0.85);
+  color: #cad6e2;
+}
+
+.pill-badge.timer-pill {
+  background: rgba(0, 0, 0, 0.6);
+  color: #ffffff;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Центральная кнопка Play/Pause поверх видео */
+.player-center-action {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  pointer-events: auto;
+}
+
+.big-play-btn {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--color-accent-primary-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.big-play-btn:hover {
+  transform: scale(1.08);
+  background: #ffffff;
+}
+
+/* Нижняя панель плеера */
+.player-bottom-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 20px 16px 14px;
+  background: linear-gradient(180deg, transparent 0%, rgba(15, 20, 24, 0.85) 100%);
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Кастомный прогресс-бар */
+.video-progress-track {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 3px;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.video-progress-fill {
+  height: 100%;
+  background: var(--color-accent-primary-light);
+  transition: width 0.15s linear;
+}
+
+.player-controls-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #ffffff;
+  font-size: 13px;
+}
+
+.controls-left,
+.controls-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.icon-player-btn {
+  color: #ffffff;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0.9;
+  transition: opacity 0.2s ease;
+}
+
+.icon-player-btn:hover {
+  opacity: 1;
+}
+
+.video-time-text {
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* ============================================
+   Карточка информации о видео
+   ============================================ */
+
+.video-info-card {
+  background: var(--color-bg-card);
+  padding: 18px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-accent-snow);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.video-info-title {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  line-height: 1.3;
+}
+
+.video-instructor-line {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+}
+
+.focus-tags-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.focus-tag-chip {
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: var(--color-bg-secondary);
+  color: var(--color-text-secondary);
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.video-desc-text {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+}
+
+/* Кнопка ручной отметки */
+.manual-complete-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 8px;
+  border-top: 1px dashed var(--color-accent-snow);
+}
+
+.mark-done-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: var(--radius-md);
+  background: var(--color-accent-primary);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.mark-done-btn:hover {
+  background: var(--color-accent-primary-light);
+  transform: translateY(-1px);
+}
+
+.mark-done-btn.already-done {
+  background: var(--color-green);
+  cursor: default;
+}
+
+/* Баннер поздравления при завершении */
+.completion-banner {
+  background: #f0f7f4;
+  border: 1px solid #c2e2d3;
+  color: #2b5741;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  animation: slideDown 0.3s ease;
+}
+
+.completion-banner h3 {
+  color: #1f4231;
+  font-size: 16px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.completion-banner p {
+  font-size: 13px;
+  color: #3b6b52;
+}
+
+.banner-close-action {
+  margin-top: 4px;
+  align-self: flex-start;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Секция «Где хранить 50+ видео» */
+.storage-guide-card {
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-accent-snow);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  font-size: 13px;
+}
+
+.storage-guide-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.storage-guide-content {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+  border-top: 1px solid var(--color-accent-snow);
+  padding-top: 10px;
+}
+
+.storage-option-row {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.storage-option-name {
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+/* Модалка истории 30 дней */
+.history-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(26, 34, 41, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  z-index: 999;
+}
+
+.history-modal-content {
+  background: var(--color-bg-card);
+  max-width: 500px;
+  width: 100%;
+  max-height: 80vh;
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.2);
+}
+
+.history-modal-header {
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--color-accent-snow);
+}
+
+.history-modal-header h2 {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.history-list-scroll {
+  padding: 16px 20px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.history-entry-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  background: var(--color-bg-primary);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-accent-snow);
+}
+
+.history-entry-left {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.history-entry-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.history-entry-meta {
+  font-size: 11px;
+  color: var(--color-text-muted);
+}
+
+.history-select-btn {
+  padding: 4px 10px;
+  font-size: 12px;
+  border-radius: 4px;
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-accent-snow);
+  color: var(--color-accent-primary);
+  cursor: pointer;
+}
+
+.history-select-btn:hover {
+  background: var(--color-accent-primary);
+  color: #ffffff;
+}
